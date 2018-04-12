@@ -5,12 +5,13 @@ import pytesseract
 from pathlib import Path
 import random
 from PIL import ImageGrab, Image, ImageEnhance, ImageFilter
+import datetime
 
 from pywinauto.keyboard import SendKeys
 
-src_path = 'C:/Users/balint.nandor/PycharmProjects/DofusMovement/analyze/'
+src_path = 'C:/Users/balint.nandor/Documents/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
-
+skipFirst300 = 0
 
 def findResourcePrice(itemName=''):
         searchFiedX, searchFiedY = pyautogui.locateCenterOnScreen('searchField.PNG')
@@ -53,9 +54,17 @@ def findResourcePrice(itemName=''):
 def findPriceOfEveryResource():
         with open("onlyFirstResources.txt", 'r') as inFile:
                 for line in inFile.read().splitlines():
+                        now = datetime.datetime.now()
+                        date = str(now.month) + str(now.day)
+                        global skipFirst300
+                        if ( skipFirst300 < 600):
+                                skipFirst300= skipFirst300+ 1
+                                print(skipFirst300)
+                                continue
                         itemName = line
-                        myFile = Path(src_path + itemName + "screenShot.png")
+                        myFile = Path(src_path + itemName + 'ONE' + date +'.jpg')
                         if myFile.is_file():
+                                print(itemName + " already exists")
                                 continue
                         searchFiedX, searchFiedY = pyautogui.locateCenterOnScreen('searchField.PNG')
                         searchFiedX = searchFiedX + random.randint(50, 75)
@@ -74,29 +83,42 @@ def findPriceOfEveryResource():
                         pyautogui.click()
                         try:
                                 oneItemX, oneItemY = pyautogui.locateCenterOnScreen('1xitem.PNG')
-                                oneItemXSmall = oneItemX - 45
-                                oneItemXBig = oneItemX + 45
-                                oneItemYsmall = oneItemY + 29
-                                oneItemYBig = oneItemY + 45
-                                imageOfResult = ImageGrab.grab(bbox=(oneItemXSmall, oneItemYsmall, oneItemXBig, oneItemYBig))
-                                imageOfResult.save(src_path + itemName + "screenShot.png", "PNG")
-                                img = cv2.imread(src_path + itemName + "screenShot.png", 0)
-                                kernel = np.ones((1, 1), np.uint8)
-                                img = cv2.dilate(img, kernel, iterations=1)
-                                img = cv2.erode(img, kernel, iterations=1)
+                                print('one x ',oneItemX)
+                                print('one y ',oneItemY)
 
-                                # Write image after removed noise
-                                cv2.imwrite(src_path + itemName + 'removed_noise.jpg', img)
+                                captureImage(oneItemX,oneItemY, itemName + 'ONE' + date)
 
-                                img = (255 - img)
-                                cv2.imwrite(src_path + itemName + 'reverse.jpg', img)
+                                tenItemX, tenItemY = pyautogui.locateCenterOnScreen('10xitem.PNG')
+
+                                # we make tenY equal to oneY
+                                tenItemY = tenItemY - 1
+
+                                captureImage(tenItemX,tenItemY, itemName + 'TEN' + date)
+
+                                hundredItemX, hundredItemY = pyautogui.locateCenterOnScreen('100xitem.PNG')
+
+                                captureImage(hundredItemX,hundredItemY, itemName + 'HUNDRED' + date)
+
                         except TypeError:
                                 print(itemName + 'not exists')
-                                imageOfResult = ImageGrab.grab(
-                                        bbox=(500, 500, 510, 510))
-                                imageOfResult.save(src_path + itemName + "screenShot.png", 0)
-                                imageOfResult.save(src_path + itemName + "NOT_EXISTS", 0)
+                                # imageOfResult = ImageGrab.grab(
+                                #         bbox=(500, 500, 510, 510))
+                                # imageOfResult.save(src_path + itemName + "screenShot.png", 0)
+                                # imageOfResult.save(src_path + itemName + "NOT_EXISTS", 0)
                         except FileNotFoundError:
                                 print(itemName +' bugos')
 
 
+def captureImage(xSize, ySize, itemName):
+        ItemYsmall = ySize + 29
+        ItemYBig = ySize + 45
+        ItemXsmall = xSize - 45
+        ItemXBig = xSize + 45
+        imageOfResult = ImageGrab.grab(bbox=(ItemXsmall, ItemYsmall, ItemXBig, ItemYBig))
+        imageOfResult.save(src_path + itemName + ".jpg", "JPEG")
+        img = cv2.imread(src_path + itemName + ".jpg", 0)
+        kernel = np.ones((1, 1), np.uint8)
+        img = cv2.dilate(img, kernel, iterations=1)
+        img = cv2.erode(img, kernel, iterations=1)
+        cv2.imwrite(src_path + "noisefree/" + itemName + '_NOISE_FREE.jpg', img)
+        print(itemName + "saved")
