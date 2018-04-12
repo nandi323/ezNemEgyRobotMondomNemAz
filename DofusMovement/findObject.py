@@ -9,7 +9,7 @@ import datetime
 
 from pywinauto.keyboard import SendKeys
 
-src_path = 'C:/Users/balint.nandor/Documents/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/'
+src_path = 'C:/Users/Kapi/Documents/GitHub/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/noisefree/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
 skipFirst300 = 0
 

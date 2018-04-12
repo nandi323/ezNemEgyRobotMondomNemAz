@@ -22,6 +22,6 @@ def buyXItem(number=5):
         pyautogui.moveTo(xBuy,yBuy, timeToMoveBuy)
 
         pyautogui.click()
-
+        time.sleep(0.01)
         SendKeys('{ENTER}')
         time.sleep(0.1)
