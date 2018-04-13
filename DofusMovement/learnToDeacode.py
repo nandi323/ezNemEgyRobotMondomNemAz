@@ -6,24 +6,26 @@ from PIL import Image
 import time
 from sklearn import svm
 from sklearn import datasets
+import biggestLearnSoFar
 
-src_path = 'C:/Users/Kapi/Documents/GitHub/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/noisefree/test/'
+src_path = 'C:\\Users\\balint.nandor\\Documents\\ezNemEgyRobotMondomNemAz\\DofusMovement\\analyze\\noisefree\\kurva.bmp'
+control_path = 'C:\\Users\\balint.nandor\\Documents\\ezNemEgyRobotMondomNemAz\\DofusMovement\\analyze\\noisefree\\'
+#
+# dataset = []
+# resultset = []
 
-dataset = []
-resultset = []
-
-for file in os.listdir(src_path):
-    if file.endswith(".jpg"):
-        image = cv2.imread(src_path + file, 0)
-        # convert image black and white
-        thresh, im_bw = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        im_bw = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
-
-        imageArray = np.asarray(im_bw)
-
-        dataset.append(imageArray)
-
-numpyArray = np.array(dataset)
+# for file in os.listdir(src_path):
+#     if file.endswith(".bmp"):
+#         image = cv2.imread(src_path + file, 0)
+#         # convert image black and white
+#         thresh, im_bw = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+#         im_bw = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
+#
+#         imageArray = np.asarray(im_bw)
+#
+#         dataset.append(imageArray)
+#
+# numpyArray = np.array(dataset)
 
 # with open('imagesInArrayFormat.txt', 'w') as outfile:
 #     # I'm writing a header here just for the sake of readability
@@ -42,13 +44,13 @@ numpyArray = np.array(dataset)
 #         # Writing out a break to indicate different slices...
 #         # outfile.write('# New slice\n')
 # outfile.close()
-
-
+#
+#
 # newData = np.loadtxt('imagesInArrayFormat.txt')
 # alma = np.array(newData.reshape(len(dataset),16,90))
-
-# plt.imshow(alma[1])
-# plt.show()
+#
+# # plt.imshow(alma[1])
+# # plt.show()
 #
 # for data in dataset:
 #     plt.imshow(data)
@@ -61,16 +63,24 @@ numpyArray = np.array(dataset)
 
 np.set_printoptions(threshold=np.nan)
 clf = svm.SVC(gamma=0.001, C=100)
-x = np.loadtxt('imagesInArrayFormat.txt')
-alma = np.array(x.reshape(len(dataset),16,90))
+# x = np.loadtxt('imagesInArrayFormat.txt')
+# alma = np.array(x.reshape(len(dataset),16,90))
 digit = datasets.load_digits()
 
-flatim = alma.flatten()
+# flatim = alma.flatten()
 
-X = alma.reshape(14,1440)
-y = np.load("resultDataset.npy")
+
+X = np.loadtxt("generalsamples.data")
+y = np.loadtxt('generalresponses.data')
 
 clf.fit(X,y)
 
-print('predict', clf.predict(X))
+controlImg = cv2.imread(src_path , 0)
+# convert image black and white
+thresh, im_bw = cv2.threshold(controlImg, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+im_bw = cv2.threshold(controlImg, thresh, 255, cv2.THRESH_BINARY)[1]
+
+imageArray = np.asarray(im_bw)
+imageArrayFlat = imageArray.flatten()
+print('predict', clf.predict(imageArrayFlat.reshape(1,1440)))
 

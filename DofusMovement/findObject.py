@@ -9,7 +9,7 @@ import datetime
 
 from pywinauto.keyboard import SendKeys
 
-src_path = 'C:/Users/Kapi/Documents/GitHub/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/noisefree/'
+src_path = 'C:/Users/balint.nandor/Documents/ezNemEgyRobotMondomNemAz/DofusMovement/analyze/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
 skipFirst300 = 0
 
@@ -62,7 +62,7 @@ def findPriceOfEveryResource():
                                 print(skipFirst300)
                                 continue
                         itemName = line
-                        myFile = Path(src_path + itemName + 'ONE' + date +'.jpg')
+                        myFile = Path(src_path + itemName + 'ONE' + date +'.bmp')
                         if myFile.is_file():
                                 print(itemName + " already exists")
                                 continue
@@ -83,8 +83,8 @@ def findPriceOfEveryResource():
                         pyautogui.click()
                         try:
                                 oneItemX, oneItemY = pyautogui.locateCenterOnScreen('1xitem.PNG')
-                                print('one x ',oneItemX)
-                                print('one y ',oneItemY)
+                                # print('one x ',oneItemX)
+                                # print('one y ',oneItemY)
 
                                 captureImage(oneItemX,oneItemY, itemName + 'ONE' + date)
 
@@ -99,6 +99,7 @@ def findPriceOfEveryResource():
 
                                 captureImage(hundredItemX,hundredItemY, itemName + 'HUNDRED' + date)
 
+
                         except TypeError:
                                 print(itemName + 'not exists')
                                 # imageOfResult = ImageGrab.grab(
@@ -106,7 +107,7 @@ def findPriceOfEveryResource():
                                 # imageOfResult.save(src_path + itemName + "screenShot.png", 0)
                                 # imageOfResult.save(src_path + itemName + "NOT_EXISTS", 0)
                         except FileNotFoundError:
-                                print(itemName +' bugos')
+                               print(itemName +' bugos')
 
 
 def captureImage(xSize, ySize, itemName):
@@ -115,10 +116,10 @@ def captureImage(xSize, ySize, itemName):
         ItemXsmall = xSize - 45
         ItemXBig = xSize + 45
         imageOfResult = ImageGrab.grab(bbox=(ItemXsmall, ItemYsmall, ItemXBig, ItemYBig))
-        imageOfResult.save(src_path + itemName + ".jpg", "JPEG")
-        img = cv2.imread(src_path + itemName + ".jpg", 0)
+        imageOfResult.save(src_path + itemName + ".bmp", "BMP")
+        img = cv2.imread(src_path + itemName + ".bmp", 0)
         kernel = np.ones((1, 1), np.uint8)
         img = cv2.dilate(img, kernel, iterations=1)
         img = cv2.erode(img, kernel, iterations=1)
-        cv2.imwrite(src_path + "noisefree/" + itemName + '_NOISE_FREE.jpg', img)
+        cv2.imwrite(src_path + "noisefree/" + itemName + '_NOISE_FREE.bmp', img)
         print(itemName + "saved")

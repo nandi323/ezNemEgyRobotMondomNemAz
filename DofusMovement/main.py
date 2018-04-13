@@ -12,8 +12,8 @@ w.find_window_wildcard(".*" + characterName + "*")
 w.set_foreground()
 #
 rect = w.resize_window(window_size_x, window_size_y)
-buy1xitem.buyXItem(40)
+# buy1xitem.buyXItem(40)
 #
-# # # findObject.findResourcePrice('Flask of draco')
-# findObject.findPriceOfEveryResource()
+# findObject.findResourcePrice('Flask of draco')
+findObject.findPriceOfEveryResource()
 
